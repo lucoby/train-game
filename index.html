@@ -49,7 +49,14 @@
     }
 
     function create () {
-        this.add.image(328, 256, 'background');
+        const bg_x_center = 328;
+        const bg_y_center = 256;
+        const option_base_height = 350;
+        const option_height = 150;
+        this.add.image(bg_x_center, bg_y_center, 'background');
+        this.add.image(bg_x_center, bg_y_center + option_base_height, 'ground');
+        this.add.image(bg_x_center, bg_y_center + option_base_height + option_height, 'ground');
+        this.add.image(bg_x_center, bg_y_center + option_base_height + 2 * option_height, 'ground');
     }
 
     function update () {
