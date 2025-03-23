@@ -45,9 +45,14 @@
 
     var game = new Phaser.Game(config);
 
-    const TRAIN_START_HEIGHT = 200;
+    const X_CENTER = 328;
+    const TRAIN_START_Y = 200;
+    const OPTION_HEIGHT = 150;
+    const OPTION_BASE_Y = 435;
+    const OPTION_BASE_X = 100;
+    const OPTION_DISTANCE = 500;
 
-    function preload () {
+    function preload() {
         this.load.image('background', 'assets/BackgroundNoFence.png');
         this.load.image('ground', 'assets/OnlyGround.png');
         this.load.image('crate', 'assets/CrateBig.png');
@@ -57,26 +62,100 @@
         this.load.image('train', 'assets/Train.png');
     }
 
-    function create () {
-        const bg_x_center = 328;
+    function create() {
         const bg_y_center = 256;
         const bg_option_base_y = 350;
-        const option_height = 150;
-        this.add.image(bg_x_center, bg_y_center, 'background');
+        
+        this.add.image(X_CENTER, bg_y_center, 'background');
         for (let i=0; i < 3; i++) {
-            this.add.image(bg_x_center, bg_y_center + bg_option_base_y + i * option_height, 'ground');
+            this.add.image(X_CENTER, bg_y_center + bg_option_base_y + i * OPTION_HEIGHT, 'ground');
         }
 
-        this.train = this.physics.add.sprite(bg_x_center, TRAIN_START_HEIGHT, 'train');
+        this.train = this.physics.add.sprite(X_CENTER, TRAIN_START_Y, 'train').setInteractive();
+        this.input.setDraggable(this.train);
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+        });
 
-        const option_base_y = 435;
-        const option_base_x = 100;
-        this.car1 = this.physics.add.sprite(option_base_x, option_base_y, 'car1');
-        this.car2 = this.physics.add.sprite(option_base_x, option_base_y + option_height, 'car2');
-        this.car3 = this.physics.add.sprite(option_base_x, option_base_y + 2 * option_height, 'car3');
+        this.input.on('dragend', (pointer, gameObject) => {
+            let answer = this.car[this.problem.A]
+            if (answer.y - 80 < gameObject.y && gameObject.y < answer.y + 20) {
+                gameObject.x = answer.x + 190;
+                gameObject.y = answer.y - 30;
+                gameObject.input.draggable = false;
+                gameObject.setVelocityX(200);
+                answer.setVelocityX(200);
+                this.time.addEvent({
+                    delay: 4000,
+                    callback: resetProblem,
+                    callbackScope: this,
+                    loop: false
+                });
+            } else {
+                gameObject.x = X_CENTER;
+                gameObject.y = TRAIN_START_Y;
+            }
+        });
+        
+        this.problem = generate_problem();
+
+        this.question = this.add.text(X_CENTER - 15, TRAIN_START_Y - 180, this.problem.Q, {
+            fontSize: "72px",
+            color: "#000",
+            align: "center"
+        });
+
+        this.car = [];
+        this.o = []
+        for (i=0; i<3; i++) {
+            this.car.push(this.physics.add.sprite(OPTION_BASE_X, OPTION_BASE_Y + i * OPTION_HEIGHT, 'car' + (i+1)));
+            this.o.push(this.add.text(OPTION_BASE_X - 15, OPTION_BASE_Y + i * OPTION_HEIGHT - 70, this.problem.O[i], {
+                fontSize: "72px",
+                color: "#000",
+                align: "center"
+            }));
+        }
     }
 
-    function update () {
+    function update() {
+        this.o[this.problem.A].x = this.car[this.problem.A].x - 15;
+    }
+
+    function generate_problem() {
+        const letters = ["A", "E", "I", "O", "U", "P", "L", "M", "R", "B", "C"];
+        let options = combination(letters, 3);
+        let question = options[0];
+        var rnd = Phaser.Math.RND;
+        options = rnd.shuffle(options)
+        return {"Q": question, "O": options, "A": options.indexOf(question)}
+    }
+
+    function combination(arr, num) {
+        let copy = arr.slice();
+        let result = [];
+        for (let i = 0; i < num; i++) {
+            let index = Math.floor(Math.random() * copy.length);
+            result.push(copy.splice(index, 1)[0]);
+        }
+        return result;
+    }
+
+    function resetProblem() {
+        this.train.setVelocityX(0);
+        this.car[this.problem.A].setVelocityX(0);
+        this.problem = generate_problem();
+        this.train.x = X_CENTER;
+        this.train.y = TRAIN_START_Y;
+        this.train.input.draggable = true;
+        this.question.setText(this.problem.Q)
+        for (i=0; i<3; i++) {
+            this.car[i].x = OPTION_BASE_X;
+            this.car[i].y = OPTION_BASE_Y + i * OPTION_HEIGHT;
+            this.o[i].x = OPTION_BASE_X - 15;
+            this.o[i].y = OPTION_BASE_Y + i * OPTION_HEIGHT - 70;
+            this.o[i].setText(this.problem.O[i]);
+        }
     }
 
 </script>
