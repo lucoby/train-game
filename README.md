@@ -2,7 +2,7 @@
 
 ## Backlog
 
-* Refactor constants
+* ~~Refactor constants~~
 * Refactor game methods
 * Addition (1-5)
 * Full alphabet

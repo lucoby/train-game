@@ -45,12 +45,7 @@
 
     var game = new Phaser.Game(config);
 
-    const X_CENTER = 328;
-    const TRAIN_START_Y = 200;
-    const OPTION_HEIGHT = 150;
-    const OPTION_BASE_Y = 435;
-    const OPTION_BASE_X = 100;
-    const OPTION_DISTANCE = 500;
+    
 
     function preload() {
         this.load.image('background', 'assets/BackgroundNoFence.png');
@@ -63,15 +58,30 @@
     }
 
     function create() {
-        const bg_y_center = 256;
-        const bg_option_base_y = 350;
+        this.x_center = 328;
+        this.bg_y_center = 256;
+        this.bg_option_base_y = 350;
+
+        this.train_start_y = 200;
+
+        this.option_height = 150;
+        this.option_base_y = 435;
+        this.option_base_x = 100;
+
+        this.option_text_offset_x = -15;
+        this.option_text_offset_y = -70;
+
+        this.train_speed = 400;
+        this.end_distance = 800000;
+
         
-        this.add.image(X_CENTER, bg_y_center, 'background');
+        
+        this.add.image(this.x_center, this.bg_y_center, 'background');
         for (let i=0; i < 3; i++) {
-            this.add.image(X_CENTER, bg_y_center + bg_option_base_y + i * OPTION_HEIGHT, 'ground');
+            this.add.image(this.x_center, this.bg_y_center + this.bg_option_base_y + i * this.option_height, 'ground');
         }
 
-        this.train = this.physics.add.sprite(X_CENTER, TRAIN_START_Y, 'train').setInteractive();
+        this.train = this.physics.add.sprite(this.x_center, this.train_start_y, 'train').setInteractive();
         this.input.setDraggable(this.train);
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             gameObject.x = dragX;
@@ -79,28 +89,37 @@
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
+            const answer_offset_min = -80;
+            const answer_offset_max = 20;
+
+            const train_answer_offset_x = 190;
+            const train_answer_offset_y = 30;
+            
             let answer = this.car[this.problem.A]
-            if (answer.y - 80 < gameObject.y && gameObject.y < answer.y + 20) {
-                gameObject.x = answer.x + 190;
-                gameObject.y = answer.y - 30;
+            
+            if (answer.y + answer_offset_min < gameObject.y && gameObject.y < answer.y + answer_offset_max) {
+                gameObject.x = answer.x + train_answer_offset_x;
+                gameObject.y = answer.y - train_answer_offset_y;
                 gameObject.input.draggable = false;
-                gameObject.setVelocityX(200);
-                answer.setVelocityX(200);
+                gameObject.setVelocityX(this.train_speed);
+                answer.setVelocityX(this.train_speed);
                 this.time.addEvent({
-                    delay: 4000,
+                    delay: this.end_distance / this.train_speed,
                     callback: resetProblem,
                     callbackScope: this,
                     loop: false
                 });
             } else {
-                gameObject.x = X_CENTER;
-                gameObject.y = TRAIN_START_Y;
+                gameObject.x = this.x_center;
+                gameObject.y = this.train_start_y;
             }
         });
         
         this.problem = generate_problem();
 
-        this.question = this.add.text(X_CENTER - 15, TRAIN_START_Y - 180, this.problem.Q, {
+        const question_x_offset = -15;
+        const question_y_offset = -180;
+        this.question = this.add.text(this.x_center + question_x_offset, this.train_start_y + question_y_offset, this.problem.Q, {
             fontSize: "72px",
             color: "#000",
             align: "center"
@@ -109,12 +128,17 @@
         this.car = [];
         this.o = []
         for (i=0; i<3; i++) {
-            this.car.push(this.physics.add.sprite(OPTION_BASE_X, OPTION_BASE_Y + i * OPTION_HEIGHT, 'car' + (i+1)));
-            this.o.push(this.add.text(OPTION_BASE_X - 15, OPTION_BASE_Y + i * OPTION_HEIGHT - 70, this.problem.O[i], {
-                fontSize: "72px",
-                color: "#000",
-                align: "center"
-            }));
+            this.car.push(this.physics.add.sprite(this.option_base_x, this.option_base_y + i * this.option_height, 'car' + (i+1)));
+            this.o.push(this.add.text(
+                this.option_base_x + this.option_text_offset_x,
+                this.option_base_y + i * this.option_height + this.option_text_offset_y,
+                this.problem.O[i],
+                {
+                    fontSize: "72px",
+                    color: "#000",
+                    align: "center"
+                }
+            ));
         }
     }
 
@@ -145,19 +169,18 @@
         this.train.setVelocityX(0);
         this.car[this.problem.A].setVelocityX(0);
         this.problem = generate_problem();
-        this.train.x = X_CENTER;
-        this.train.y = TRAIN_START_Y;
+        this.train.x = this.x_center;
+        this.train.y = this.train_start_y;
         this.train.input.draggable = true;
         this.question.setText(this.problem.Q)
         for (i=0; i<3; i++) {
-            this.car[i].x = OPTION_BASE_X;
-            this.car[i].y = OPTION_BASE_Y + i * OPTION_HEIGHT;
-            this.o[i].x = OPTION_BASE_X - 15;
-            this.o[i].y = OPTION_BASE_Y + i * OPTION_HEIGHT - 70;
+            this.car[i].x = this.option_base_x;
+            this.car[i].y = this.option_base_y + i * this.option_height;
+            this.o[i].x = this.option_base_x + this.option_text_offset_x;
+            this.o[i].y = this.option_base_y + i * this.option_height + this.option_text_offset_y;
             this.o[i].setText(this.problem.O[i]);
         }
     }
-
 </script>
 <div id="game-container"></div>
 </body>
