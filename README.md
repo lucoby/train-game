@@ -5,7 +5,7 @@
 * ~~Refactor constants~~
 * ~~Refactor game methods~~
 * ~~Index for selecting games~~
-* Addition (1-5)
+* ~~Addition (1-5)~~
 * Full alphabet
 * Lower case letters
 * Subtraction

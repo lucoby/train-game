@@ -4,12 +4,28 @@ var game = getTrainGame(generateProblem, resetProblem);
 
 
 function generateProblem() {
-    const letters = ["A", "E", "I", "O", "U", "P", "L", "M", "R", "B", "C"];
-    let options = combination(letters, 3);
-    let question = options[0];
+    let a = Phaser.Math.Between(1, 5);
+    let b = Phaser.Math.Between(1, 5);
+
+    let question = "" + a + "+" + b;
+    let answer = a + b;
+    let options = [answer];
+
+    for (let i = 0; i < 2; i++) {
+        options.push(getUniqueRandom(1, 10, options))
+    }
+
     var rnd = Phaser.Math.RND;
     options = rnd.shuffle(options)
-    return {"Q": question, "O": options, "A": options.indexOf(question)}
+    return {"Q": question, "O": options, "A": options.indexOf(answer)}
+}
+
+function getUniqueRandom(min, max, excludedList) {
+    let randomNumber;
+    do {
+        randomNumber = Phaser.Math.Between(min, max);  // Generate random number
+    } while (excludedList.includes(randomNumber));  // Check if it's in the excluded list
+    return randomNumber;
 }
 
 function resetProblem() {

@@ -93,20 +93,20 @@ function getCreate(generateProblem, resetProblem){
         
         this.problem = generateProblem();
     
-        const question_x_offset = -15;
         const question_y_offset = -180;
-        this.question = this.add.text(this.x_center + question_x_offset, this.train_start_y + question_y_offset, this.problem.Q, {
+        this.question = this.add.text(this.x_center, this.train_start_y + question_y_offset, this.problem.Q, {
             fontSize: "72px",
             color: "#000",
             align: "center"
         });
+        this.question.x -= this.question.width / 2;
     
         this.car = [];
         this.o = []
         for (let i=0; i<3; i++) {
             this.car.push(this.physics.add.sprite(this.option_base_x, this.option_base_y + i * this.option_height, 'car' + (i+1)));
             this.o.push(this.add.text(
-                this.option_base_x + this.option_text_offset_x,
+                this.option_base_x,
                 this.option_base_y + i * this.option_height + this.option_text_offset_y,
                 this.problem.O[i],
                 {
@@ -115,6 +115,7 @@ function getCreate(generateProblem, resetProblem){
                     align: "center"
                 }
             ));
+            this.o[i].x -= Math.round(this.o[i].width / 2);
         }
     }
     return create
