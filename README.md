@@ -7,7 +7,8 @@
 * ~~Index for selecting games~~
 * ~~Addition (1-5)~~
 * ~~Full alphabet~~
-* Lower case letters
+* ~~Lower case letters~~
 * Subtraction
 * Addition (1-10)
+* Confetti effect
 * Subitization
