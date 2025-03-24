@@ -3,7 +3,8 @@
 ## Backlog
 
 * ~~Refactor constants~~
-* Refactor game methods
+* ~~Refactor game methods~~
+* Index for selecting games
 * Addition (1-5)
 * Full alphabet
 * Lower case letters
