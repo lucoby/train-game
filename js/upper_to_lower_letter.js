@@ -4,7 +4,7 @@ var game = getTrainGame(generateProblem, resetProblem);
 
 
 function generateProblem() {
-    const letters = Array.from({ length: 97 }, (_, i) => String.fromCharCode(65 + i));
+    const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
     let options = combination(letters, 3);
     let answer = options[0];
     let question = answer.toUpperCase();
