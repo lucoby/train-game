@@ -122,7 +122,7 @@ function getCreate(generateProblem, resetProblem){
 }
 
 function update() {
-    this.o[this.problem.A].x = this.car[this.problem.A].x - 15;
+    this.o[this.problem.A].x = this.car[this.problem.A].x - this.o[this.problem.A].width / 2;
 }
 
 export function combination(arr, num) {
