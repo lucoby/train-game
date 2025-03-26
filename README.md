@@ -10,6 +10,6 @@
 * ~~Lower case letters~~
 * ~~Subtraction~~
 * ~~Addition (1-10)~~
-* Matching upper to lower case letters
+* ~~Matching upper to lower case letters~~
 * Confetti effect
 * Subitization
